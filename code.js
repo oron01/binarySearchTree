@@ -79,6 +79,21 @@ function buildTree(array) {
         }
     }
 
+    let insertValue = (value,node) => {
+        if (value > node.data) {
+            if (node.right !== null) {
+                insertValue(value,node.right)
+            }
+            else {node.right = Node(value,null,null)}
+        }
+        else if (value < node.data) {
+            if (node.left !== null) {
+                insertValue(value,node.left)
+            }
+            else (node.left = Node(value,null,null))
+        }
+    }
+
     const prettyPrint = (node, prefix = "", isLeft = true) => {
         if (node === null) {
           return;
@@ -91,8 +106,12 @@ function buildTree(array) {
           prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
         }
       };
-  
-      prettyPrint(createBST(sortedList))
+      
+      let first = createBST(sortedList)
+      prettyPrint(first)
+      insertValue(420,first)
+      insertValue(6,first)
+      prettyPrint(first)
 }
 
 /*
