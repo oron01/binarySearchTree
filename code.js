@@ -1,8 +1,8 @@
 function Node(value,leftChildren,rightChildren) {
     return {
-        value:value,
-        leftChildren:leftChildren,
-        rightChildren:rightChildren,
+        data:value,
+        left:leftChildren,
+        right:rightChildren,
     }
 }
 
@@ -12,61 +12,91 @@ function Tree(array) {
 
 function buildTree(array) {
 
-    let iteratorSort = (halfOne,halfTwo) => {
-        let newArray = []
-        console.log(Array.isArray(halfOne))
-        console.log(halfOne)
-        console.log(Array.isArray(halfTwo))
-        console.log(halfTwo)
-    
-        while (halfOne.length !== 0 || halfTwo.length !== 0) {
-            if (halfOne.length !== 0) {
-                if (halfOne[0] >= halfTwo[0] && halfTwo.length !== 0) {
-                    newArray.push(halfTwo.shift())
-                    
+    let compareSort = (one,two) => {
+        let sorted = []
+        while (one.length !== 0 || two.length !== 0) {
+            if (one.length > 0 && two.length > 0) {
+                if (one[0] > two[0]) {
+                    sorted.push(two[0])
+                    two.shift()
                 }
-                else if (halfOne[0] < halfTwo[0] && halfTwo.length !== 0) {
-                    newArray.push(halfOne.shift())
-                }
-                else if (halfTwo.length == 0) {
-                    newArray.push(halfOne.shift())
+                else {
+                    sorted.push(one[0])
+                    one.shift()
                 }
             }
-            else if (halfTwo.length !== 0) {
-                newArray.push(halfTwo.shift())
-        }
-        }
-        return newArray
-    
-    }
+            else if (one.length == 0) {
+                sorted.push(two[0])
+                two.shift()
+            }
+            else {
+                sorted.push(one[0])
+                one.shift()
+            }
 
-    let mergeSortArray = (array) => {
-        if (array.length == 1) { return array[0]}
-        let slicedArray = array.slice()
-        let first = slicedArray.splice(0, (array.length / 2))
-        let second = slicedArray
-        first = mergeSortArray(first)
-        halfTwo = mergeSortArray(second)
-        let sorted = iteratorSort(first,second)
+        }
         return sorted
-    
+
     }
 
-    // let mergeSort = (array) => {
-    //     if (array.length == 1) return [array[0]]
-    
-    //     else {
-    //         let slicedArray = array.slice()
-    //         let first = slicedArray.splice(0 ,(array.length / 2))
-    //         first = mergeSort(first)
-    //         let second = slicedArray
-    //         second = mergeSort(second)
-    //         let sorted = iteratorSort(first,second)
-    //         return sorted
-    // }
-    // }
+    let mergeSort = (arr) => {
+        if (arr.length == 1) return arr
+        else {
+        let array = arr.slice()
+        let firstHalf = array.splice(0, array.length/2)
+        firstHalf = mergeSort(firstHalf)
+        let secondHalf = array.slice()
+        secondHalf = mergeSort(secondHalf)
+        return [...compareSort(firstHalf,secondHalf)]}
+    }
 
-    console.log(mergeSortArray(array))
+    console.log(mergeSort(array))
+
+    let sortedList = mergeSort(array)
+
+    let removeDupes = (array) => {
+        let newArr = []
+        for (let i = 0; i < array.length ; i++) {
+            if (newArr.includes(array[i])) {}
+            else {newArr.push(array[i])}
+        }
+        return newArr
+    }
+
+    sortedList = removeDupes(sortedList)
+
+    let createBST = (list) => {
+        if (list.length == 0) {return null}
+        else if (list.length == 1) return Node(list[0],null,null)
+        else {
+            let middle = list.length / 2
+            let leftHalf = list.slice(0,middle)
+            let rightHalf = list.slice(middle+1)
+            middle = list[Math.floor(middle)]
+            leftHalf = createBST(leftHalf)
+            rightHalf= createBST(rightHalf)
+            return Node(middle,leftHalf,rightHalf)
+        }
+    }
+
+    const prettyPrint = (node, prefix = "", isLeft = true) => {
+        if (node === null) {
+          return;
+        }
+        if (node.right !== null) {
+          prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+        }
+        console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
+        if (node.left !== null) {
+          prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+        }
+      };
+  
+      prettyPrint(createBST(sortedList))
 }
 
-
+/*
+create a function for a bst
+recieve a sorted list
+get the center element,
+*/
