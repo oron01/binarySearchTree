@@ -94,6 +94,46 @@ function buildTree(array) {
         }
     }
 
+    let removeValue = (value,node) => {
+        let findNode = (value,node) => {
+            if (value == node.data) return node
+            else if (value > node.data && node.right !== null) {return findNode(value,node.right)}
+            else if (value < node.data && node.left !== null) {return findNode(value,node.left)}
+            else {return null}
+        }
+        let findParentNode = (targetNode,node) => {
+            if (node.left == targetNode || node.right == targetNode) {
+                if (node.left == targetNode) return {parentNode: node,side: "left"}
+                else return {parentNode:node,side:"right"}
+            }
+            else if (node.data < targetNode.data) {
+                return findParentNode(targetNode,node.right)
+            }
+            else if (node.data > targetNode.data) {
+                return findParentNode(targetNode,node.left)
+            }
+        }
+        let targetNode = findNode(value,node)
+        let parentNode = findParentNode(targetNode,node)
+        if (targetNode.left == null && targetNode.right == null) {
+            parentNode.parentNode[parentNode.side] = null
+        }
+        else if (targetNode.left !== null && targetNode.right !== null) {
+            let findNextBiggest = (currentSearchNode) => {
+                if (currentSearchNode.left == null) return currentSearchNode
+                else {return findNextBiggest(currentSearchNode.left)}
+            }
+
+            let nextBiggest = findNextBiggest(targetNode.right)
+            removeValue(nextBiggest.data,node)            
+            parentNode.parentNode[parentNode.side].data = nextBiggest.data
+        }
+        else {
+            parentNode.parentNode[parentNode[side]] = targetNode[parentNode.side]
+        }
+
+    }
+
     const prettyPrint = (node, prefix = "", isLeft = true) => {
         if (node === null) {
           return;
@@ -109,8 +149,7 @@ function buildTree(array) {
       
       let first = createBST(sortedList)
       prettyPrint(first)
-      insertValue(420,first)
-      insertValue(6,first)
+      removeValue(5,first)
       prettyPrint(first)
 }
 
